@@ -4,6 +4,7 @@ import requests;
 import json;
 import os;
 import threading;
+from sys import argv;
 
 ''' GLOBAL VARS '''
 VICTIM = ("127.0.0.1",1337); # (<ip_address>, <port_no.>)
@@ -42,6 +43,10 @@ def tunnel():
 if __name__ == "__main__":
 	print("Starting attacker-side program....");
 	run_flag = True;
+	
+	if len(argv) > 2:
+		if argv[1].split(".") == 4:
+			VICTIM[0]=argv[1];
 	
 	while run_flag == True:
 		choice = menu();
