@@ -5,6 +5,7 @@ import json;
 import os;
 import threading;
 from sys import argv;
+import time;
 
 ''' GLOBAL VARS '''
 VICTIM = ["127.0.0.1",1337]; # (<ip_address>, <port_no.>)
