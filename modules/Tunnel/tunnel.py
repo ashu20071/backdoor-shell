@@ -1,5 +1,6 @@
 import requests;
 import os;
+from getpass import getpass;
 
 '''
 FORMAT:
@@ -82,7 +83,9 @@ class Tunnel:
 if __name__ == "__main__":
 	t = Tunnel("http://moodle.dbit.in");
 	t.get();
-	data = t.login_session("https://moodle.dbit.in/login/index.php",{"username":"213uzair3413","password":"aaaaa"});
+	username = input("username -> ");
+	password = getpass("Password ->");
+	data = t.login_session("https://moodle.dbit.in/login/index.php",{"username":username,"password":password});
 	f = open("op.html","wb");
 	f.write(data);
 	f.close();
