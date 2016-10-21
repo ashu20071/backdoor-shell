@@ -127,7 +127,7 @@ def stop():
 def get_file():
 	global ts
 	f = open(ts.fname, 'rb')
-	send_list = f.readlines() #IMPORTANT Jacques: Used readlines instead of read so you can use the list
+	send_list = f.read() #IMPORTANT Jacques: Used read() now
 	f.close()
 	return send_list
 
