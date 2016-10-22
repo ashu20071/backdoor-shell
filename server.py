@@ -37,9 +37,19 @@ class CustomRequestHandler(hs.BaseHTTPRequestHandler):
 
 	def execute(self,params):
 		print("GOT ",params);
-		action = params["action"];
-		value = params["value"];
-		extras = params["extras"]
+		
+		#default values
+		action=None;
+		value=None;
+		extras=None;
+		
+		try:
+			action = params["action"];
+			value = params["value"];
+			extras = params["extras"]
+		except KeyError:
+			pass;
+		
 		ret = None; #To be returned at end
 		
 		if action == "tunnel":

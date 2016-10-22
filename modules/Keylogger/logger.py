@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #NISH, PUT CODE HERE!
 
-import keylogger;
+from . import keylogger;
 import time;
 import os;
 
