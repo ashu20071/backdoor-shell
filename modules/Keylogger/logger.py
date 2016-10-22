@@ -2,6 +2,7 @@
 #NISH, PUT CODE HERE!
 
 import keylogger;
+import threading;
 import time;
 import os;
 
@@ -100,6 +101,27 @@ def handle_keys(t, modifiers, keys):
                 buffer_start = True;
         #else:
         #    print("mismatch");
+
+class ThreadingUse(object):
+	def __init__(self, interval=1):
+        """ Constructor
+        :type interval: int
+        :param interval: Check interval, in seconds
+        """
+        self.interval = interval
+
+        thread = threading.Thread(target=self.run, args=())
+        thread.daemon = True                            # Daemonize thread
+        thread.start()                                  # Start the execution
+
+    def run(self):
+        """ Method that runs forever """
+        while True:
+            # Do something
+            print('Doing something imporant in the background')
+
+			time.sleep(self.interval)
+
 
 #now = time.time();
 #done = lambda: time.time() > now + 60; #should return True (stop) or False (continue)
