@@ -2,3 +2,6 @@
 */__pycache__/
 /__pycache__/
 modules/Tunnel/__pycache__/
+log.txt
+modules/Keylogger/__pycache__/__init__.cpython-35.pyc
+modules/Keylogger/__pycache__/logger.cpython-35.pyc
